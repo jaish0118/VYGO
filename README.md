@@ -24,4 +24,5 @@ Normal text, **bold**, aur [link](https://t.me/vygoio).
 
 - `video:` me YouTube ya Instagram reel ka link chalega. Video nahi chahiye to line hata do.
 - Post chhupani ho to `draft: true` likho.
+- Site Vercel par chalti hai: har commit par Vercel `python3 build.py` chalakar site banata hai (`vercel.json`).
 - Domain badalne par `site.json` me `site_url` badlo.

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>VYGO Post Maker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,800&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow column, form on top, live preview of the post file below. Dark neon to match the VYGO site. */
+:root {
+  --bg: #05030d;
+  --surface: #0d0822;
+  --surface-2: #150d33;
+  --line: rgba(150, 120, 255, 0.28);
+  --fg: #f4f1ff;
+  --muted: #aaa2cb;
+  --violet: #8b3dff;
+  --blue: #3d5cff;
+  --cyan: #27d6f5;
+  --ok: #5eead4;
+  --warn: #ffb86b;
+  --font-display: 'Exo 2', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.55 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 8px 40px;
+}
+.wrap { max-width: 44rem; margin-inline: auto; display: flex; flex-direction: column; gap: 22px; }
+header { padding-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+.eyebrow { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan); }
+h1 { font-family: var(--font-display); font-style: italic; font-weight: 800; font-size: clamp(2rem, 7vw, 2.8rem); line-height: 1.1; margin: 0; text-wrap: balance; }
+header p { color: var(--muted); margin: 0; }
+form { display: flex; flex-direction: column; gap: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+label { font-weight: 600; font-size: 0.95rem; }
+.hint { color: var(--muted); font-size: 0.85rem; }
+input, textarea { width: 100%; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font: inherit; }
+textarea { min-height: 15rem; resize: vertical; line-height: 1.6; }
+input:focus-visible, textarea:focus-visible, button:focus-visible, a.btn:focus-visible, summary:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+.row { display: grid; grid-template-columns: 1fr; gap: 18px; }
+@media (min-width: 40rem) { .row { grid-template-columns: 1fr 1fr; } }
+.count { font-size: 0.8rem; color: var(--muted); align-self: flex-end; }
+.count.over { color: var(--warn); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 22px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); font: 600 1rem var(--font-body); text-decoration: none; cursor: pointer; }
+.btn.primary { background: linear-gradient(95deg, var(--violet), var(--blue)); border-color: transparent; box-shadow: 0 8px 30px -8px rgba(139, 61, 255, 0.7); }
+.btn[aria-disabled="true"] { opacity: 0.4; pointer-events: none; box-shadow: none; }
+.status { font-size: 0.9rem; color: var(--muted); }
+.status.ok { color: var(--ok); }
+.status.warn { color: var(--warn); }
+.steps { margin: 0; padding-left: 1.3rem; color: var(--muted); display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; }
+.steps strong { color: var(--fg); }
+.preview { display: flex; flex-direction: column; gap: 10px; }
+.preview h2 { font-size: 1rem; margin: 0; }
+pre { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; overflow-x: auto; font: 0.85rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 22rem; overflow-y: auto; }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 4px 18px; }
+summary { cursor: pointer; padding-block: 12px; font-weight: 600; }
+details .field { padding-bottom: 16px; }
+.tips { color: var(--muted); font-size: 0.9rem; display: flex; flex-direction: column; gap: 6px; padding-bottom: 14px; }
+.tips code { background: var(--surface-2); border-radius: 6px; padding: 1px 6px; }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">VYGO blog</span>
+    <h1>Post Maker</h1>
+    <p>Heading aur text bharo. Button dabane par GitHub khulega aur file pehle se bhari hogi. Bas Commit dabana hai.</p>
+  </header>
+
+  <form id="f" novalidate>
+    <div class="field">
+      <label for="title">Heading</label>
+      <input id="title" type="text" autocomplete="off" placeholder="Jaise: How to Get the VYGO Launch Gift">
+    </div>
+    <div class="field">
+      <label for="desc">Chhota description <span class="hint">(Google me dikhta hai, khali chhodo to apne aap ban jayega)</span></label>
+      <input id="desc" type="text" autocomplete="off" placeholder="1-2 line, 150 akshar ke aas-paas">
+      <span class="count" id="dcount">0 / 155</span>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="date">Date</label>
+        <input id="date" type="date">
+      </div>
+      <div class="field">
+        <label for="video">Video link <span class="hint">(optional)</span></label>
+        <input id="video" type="url" autocomplete="off" placeholder="YouTube ya Instagram reel ka link">
+      </div>
+    </div>
+    <div class="field">
+      <label for="body">Blog text</label>
+      <textarea id="body" placeholder="Yahan blog likho.&#10;&#10;## Chhota heading&#10;&#10;Normal paragraph. **Bold** text aur [link](https://t.me/vygoio) bhi chalte hain.&#10;&#10;- Bullet 1&#10;- Bullet 2"></textarea>
+      <span class="hint">Video wali post me bhi 200-300 shabd likho, Google ko text se samajh aata hai.</span>
+    </div>
+    <div class="actions">
+      <a class="btn primary" id="publish" href="#" target="_blank" rel="noopener" aria-disabled="true">GitHub par post karo</a>
+      <button class="btn" id="copy" type="button">File text copy karo</button>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite">Pehle heading aur blog text bharo.</p>
+  </form>
+
+  <ol class="steps">
+    <li><strong>GitHub par post karo</strong> dabao. Naya tab khulega.</li>
+    <li>Wahan login ho to file ka naam aur text pehle se bhara milega. Neeche hare <strong>Commit changes</strong> button par click karo, phir dobara <strong>Commit changes</strong>.</li>
+    <li>1-2 minute baad post <code>/blog/</code> page par live ho jayegi.</li>
+  </ol>
+
+  <section class="preview" aria-labelledby="pv">
+    <h2 id="pv">Banne wali file: <span id="fname">posts/…md</span></h2>
+    <pre id="out"></pre>
+  </section>
+
+  <details>
+    <summary>Settings (sirf zarurat par badlo)</summary>
+    <div class="field">
+      <label for="repo">GitHub repo</label>
+      <input id="repo" type="text" value="jaish0118/VYGO" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="branch">Branch</label>
+      <input id="branch" type="text" value="main" autocomplete="off">
+    </div>
+    <div class="tips">
+      <span>Text me ye chalta hai: <code>## heading</code>, <code>**bold**</code>, <code>*italic*</code>, <code>[naam](link)</code>, <code>- bullet</code>.</span>
+      <span>Post chhupani ho to file ke upar <code>draft: true</code> line likh do.</span>
+    </div>
+  </details>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var title = $('title'), desc = $('desc'), date = $('date'), video = $('video'), body = $('body');
+  var repo = $('repo'), branch = $('branch');
+  var out = $('out'), fname = $('fname'), publish = $('publish'), copyBtn = $('copy'), statusEl = $('status'), dcount = $('dcount');
+  var stampedName = null;
+
+  function today() {
+    var d = new Date();
+    var m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + m + '-' + day;
+  }
+  date.value = today();
+
+  function oneLine(s) { return s.replace(/\s+/g, ' ').trim(); }
+
+  function slug() {
+    var s = title.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60).replace(/-+$/, '');
+    if (!s) {
+      if (!stampedName) stampedName = 'post-' + date.value.replace(/-/g, '') + '-' + String(Date.now()).slice(-5);
+      s = stampedName;
+    }
+    return s;
+  }
+
+  function build() {
+    var lines = ['---', 'title: ' + (oneLine(title.value) || 'Your heading'), ];
+    var d = oneLine(desc.value);
+    if (d) lines.push('description: ' + d);
+    lines.push('date: ' + (date.value || today()));
+    var v = oneLine(video.value);
+    if (v) lines.push('video: ' + v);
+    lines.push('---');
+    var text = lines.join('\n') + '\n' + (body.value.trim() || 'Blog text yahan aayega.') + '\n';
+    return text;
+  }
+
+  function update() {
+    var text = build();
+    var name = 'posts/' + slug() + '.md';
+    fname.textContent = name;
+    out.textContent = text;
+    var n = desc.value.length;
+    dcount.textContent = n + ' / 155';
+    dcount.classList.toggle('over', n > 155);
+
+    var ready = title.value.trim() !== '' && body.value.trim() !== '';
+    var r = repo.value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
+    var b = branch.value.trim() || 'main';
+    var url = 'https://github.com/' + r + '/new/' + encodeURIComponent(b) + '?filename=' + encodeURIComponent(name) + '&value=' + encodeURIComponent(text);
+    var tooLong = url.length > 7500;
+
+    publish.setAttribute('aria-disabled', ready && !tooLong ? 'false' : 'true');
+    publish.href = ready && !tooLong ? url : '#';
+    statusEl.className = 'status';
+    if (!ready) {
+      statusEl.textContent = 'Pehle heading aur blog text bharo.';
+    } else if (tooLong) {
+      statusEl.classList.add('warn');
+      statusEl.textContent = 'Post bahut lambi hai. "File text copy karo" dabao, phir GitHub me posts folder me naya file bana kar paste karo.';
+    } else {
+      statusEl.classList.add('ok');
+      statusEl.textContent = 'Taiyar hai. File ka naam: ' + name;
+    }
+  }
+
+  copyBtn.addEventListener('click', function () {
+    var text = build();
+    function ok() { statusEl.className = 'status ok'; statusEl.textContent = 'Copy ho gaya. GitHub me posts folder me ' + fname.textContent.replace('posts/', '') + ' naam se naya file banao aur paste karo.'; }
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(out);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      statusEl.className = 'status warn';
+      statusEl.textContent = 'Neeche wala text select ho gaya hai. Ab copy karo (Ctrl+C ya long press).';
+    }
+    try {
+      navigator.clipboard.writeText(text).then(ok, fallback);
+    } catch (e) { fallback(); }
+  });
+
+  [title, desc, date, video, body, repo, branch].forEach(function (el) { el.addEventListener('input', update); });
+  $('f').addEventListener('submit', function (e) { e.preventDefault(); });
+  update();
+})();
+</script>
+
+</body>
+</html>

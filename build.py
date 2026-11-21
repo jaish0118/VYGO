@@ -292,6 +292,8 @@ def build():
         shutil.rmtree(DIST)
     DIST.mkdir()
     shutil.copytree(ROOT / "assets", DIST / "assets")
+    if (ROOT / "write").exists():
+        shutil.copytree(ROOT / "write", DIST / "write")
     for extra in ("CNAME", "favicon.ico"):
         if (ROOT / extra).exists():
             shutil.copy(ROOT / extra, DIST / extra)

@@ -1,6 +1,8 @@
 # VYGO website
 
-Naya blog post kaise daalein (terminal ki zaroorat nahi):
+Sabse aasaan: site ka `/write/` page kholo (jaise vygo99.vercel.app/write/), heading aur text bharo, "GitHub par post karo" dabao, Commit dabao.
+
+Ya haath se, naya blog post kaise daalein (terminal ki zaroorat nahi):
 
 1. GitHub par repo kholo -> `posts` folder -> **Add file -> Create new file**.
 2. File ka naam likho, jaise `my-first-post.md` (English letters aur `-`, space nahi).
